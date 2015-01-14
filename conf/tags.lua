@@ -15,20 +15,20 @@ layouts = { awful.layout.suit.floating, awful.layout.suit.tile,
 -- TAGS (aka screens) two options, for single or dual display
 tags = {} if screen.count() == 1 then tags1_1 = { names  = { "[0]","[1]", "[2]",
 "[3]", "[4]", "[5]", "[6]", "[7]", "[8]", "[9]", "[A]", "[B]", "[C]", "[D]",
-"[E]", "[F]"}, layout = {  layouts[2],layouts[2], layouts[2], layouts[2], layouts[2],
+"[E]", "[F]"}, layout = {  layouts[2],layouts[2], layouts[2], layouts[5], layouts[2],
 layouts[2], layouts[2], layouts[2], layouts[4], layouts[2] , layouts[2],
 layouts[2], layouts[2], layouts[2], layouts[2], layouts[2]} } tags[1] =
 awful.tag(tags1_1.names, 1, tags1_1.layout) else
 
   tags2_1 = { names  = { "[0]","[1]", "[2]", "[3]", "[4]", "[5]", "[6]", "[7]",
   "[8]", "[9]", "[A]", "[B]", "[C]", "[D]", "[E]", "[F]"}, layout = { layouts[2],
-    layouts[2], layouts[2], layouts[2], layouts[2], layouts[2], layouts[2],
+    layouts[2], layouts[2], layouts[5], layouts[2], layouts[2], layouts[2],
     layouts[2], layouts[2], layouts[2] , layouts[2], layouts[2], layouts[2],
     layouts[2], layouts[2], layouts[2]} }
 
   tags2_2 = { names  = {"[0]", "[1]", "[2]", "[3]", "[4]", "[5]", "[6]", "[7]",
   "[8]", "[9]", "[A]", "[B]", "[C]", "[D]", "[E]", "[F]"}, layout = { layouts[2],
-    layouts[2], layouts[2], layouts[2], layouts[2], layouts[2], layouts[2],
+    layouts[2], layouts[2], layouts[5], layouts[2], layouts[2], layouts[2],
     layouts[2], layouts[2], layouts[2] , layouts[2], layouts[2], layouts[2],
     layouts[2], layouts[2], layouts[2]} }
 

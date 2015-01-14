@@ -1,8 +1,8 @@
 local awful = require("awful")
 
 globalkeys = awful.util.table.join(globalkeys,
-awful.key({ }, "XF86MonBrightnessDown", function () awful.util.spawn("xbacklight -dec 5 -time 0") end),
-awful.key({ }, "XF86MonBrightnessUp", function () awful.util.spawn("xbacklight -inc 5 -time 0") end),
+--awful.key({ }, "XF86MonBrightnessDown", function () awful.util.spawn("xbacklight -dec 5 -time 0") end),
+--awful.key({ }, "XF86MonBrightnessUp", function () awful.util.spawn("xbacklight -inc 5 -time 0") end),
 awful.key({ }, "XF86AudioRaiseVolume", function () awful.util.spawn("pavol plus") end),
 awful.key({ }, "XF86AudioLowerVolume", function () awful.util.spawn("pavol minus") end),
 --awful.key({ }, "XF86AudioMute", function () awful.util.spawn("pavol mute") end),
@@ -18,8 +18,8 @@ awful.key({ }, "XF86ScreenSaver", function () awful.util.spawn("/home/le/bin/loc
 --awful.key({ modkey,           }, "Shift_R", function () kbdcfg.switch() end),
 --PROMPT EXECUTE
 awful.key({ modkey }, "q",  function () mypromptbox[mouse.screen]:run() end),
-awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f /lu/temp/ 2>/dev/null'") end),
-awful.key({ "Mod1" }, "Print", function () awful.util.spawn("scrot -s -e 'mv $f /lu/temp/ 2>/dev/null'") end),
+awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f /mnt/lu/drive/lu/pic/screenshots/ 2>/dev/null'") end),
+awful.key({ "Mod1" }, "Print", function () awful.util.spawn("scrot -s -e 'mv $f /mnt/lu/drive/lu/pic/screenshots/ 2>/dev/null'") end),
 awful.key({ "Mod1" }, "l", function () awful.util.spawn("/home/le/bin/lock") end),
 awful.key({ modkey }, "e", function () awful.util.spawn("/home/le/bin/fm") end),
 awful.key({ modkey }, "r", function () awful.util.spawn("gmrun") end),

@@ -45,13 +45,18 @@ end
 function gpuInfo()
   local fcur = io.popen("cat /proc/acpi/bbswitch | cut -c14-")
   local cur = fcur:read()
-  if cur:match("OFF") then
-    cur = "0"
+  if cur == nil then
+    local gpu = " G(N/A)  "
+    gpu_widget:set_markup(gpu)
   else
-    cur = "1"
+    if cur:match("OFF") then
+      cur = "0"
+    else
+      cur = "1"
+    end
+    local gpu = " G("..cur..")  "
+    gpu_widget:set_markup(gpu)
   end
-  local gpu = " G("..cur..")  "
-  gpu_widget:set_markup(gpu)
   fcur:close();
 end
 

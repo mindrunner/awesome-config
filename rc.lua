@@ -31,7 +31,7 @@ configpath="/home/"..os.getenv("USER").."/.config/awesome/"
 beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 
 -- CUSTOM THEMES - pick name from themes/
-local theme = "gentoo"
+local theme = "paper"
 beautiful.init(configpath .. "/themes/" .. theme ..  "/theme.lua")
 
 
