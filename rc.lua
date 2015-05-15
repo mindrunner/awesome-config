@@ -15,6 +15,23 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 
+naughty.config.defaults.timeout          = 5
+naughty.config.defaults.screen           = 1
+naughty.config.defaults.position         = "top_right"
+naughty.config.defaults.margin           = 10
+naughty.config.defaults.height           = 80
+naughty.config.defaults.width            = 300
+naughty.config.defaults.gap              = 1
+naughty.config.defaults.ontop            = true
+naughty.config.defaults.font             = beautiful.font or "Verdana 12"
+naughty.config.defaults.icon             = nil
+naughty.config.defaults.icon_size        = 32
+naughty.config.defaults.fg               = beautiful.fg_focus or '#ffffff'
+naughty.config.defaults.bg               = beautiful.bg_focus or '#535d6c'
+naughty.config.presets.border_color      = beautiful.border_focus or '#535d6c'
+naughty.config.defaults.border_width     = 5
+naughty.config.defaults.hover_timeout    = nil
+
 -- EXTENSIONS (functions etc)
 --local mykb  = require("myrc.kb_layout") -- change keyboard layout
 local myro  = require("conf.run_once")  -- run app as long it's not running already

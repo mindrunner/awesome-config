@@ -28,6 +28,8 @@ awful.key({ modkey, }, ".", function () awful.screen.focus_relative( 1) end),
 awful.key({ modkey, }, ",", function () awful.screen.focus_relative(-1) end),
 awful.key({ modkey }, "b", function () mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible end),
 
+awful.key({ "Control" }, "F8", function () awful.util.spawn("xbacklight -dec 5 -time 0") end),
+awful.key({"Control" }, "F9", function () awful.util.spawn("xbacklight -inc 5 -time 0") end),
 
 awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
 awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),

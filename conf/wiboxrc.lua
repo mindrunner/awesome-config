@@ -166,7 +166,7 @@ function netInfo()
   --net_widget:set_markup("  "..res)
 end
 
-battery_timer = timer({timeout = 5})
+battery_timer = timer({timeout = 1})
 battery_timer:connect_signal("timeout", function()
   batteryInfo("BAT0")
 end)
@@ -178,20 +178,20 @@ battery_timer:start()
 --end)
 --net_timer:start()
 
-fan_timer = timer({timeout = 5})
+fan_timer = timer({timeout = 1})
 fan_timer:connect_signal("timeout", function()
   fanInfo()
 end)
 fan_timer:start()
 
 
-gpu_timer = timer({timeout = 10})
+gpu_timer = timer({timeout = 1})
 gpu_timer:connect_signal("timeout", function()
   gpuInfo()
 end)
 gpu_timer:start()
 
-hdd_timer = timer({timeout = 10})
+hdd_timer = timer({timeout = 1})
 hdd_timer:connect_signal("timeout", function()
   hddInfo()
 end)

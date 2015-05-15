@@ -3,11 +3,12 @@ local menubar = require("menubar")
 
 layouttimer = timer({ timeout = 0.01 })
 layouttimer:connect_signal("timeout", function()
-  c = awful.mouse.client_under_pointer(screen)
-  if c then
-    client.focus = c
-    c:raise()
-  end
+  --c = awful.mouse.client_under_pointer(screen)
+  --if c then
+    --client.focus = c
+    --c:raise()
+  --end
+  --mouse.coords({x = client.focus., y = 10})
   layouttimer:stop()
 end)
 
