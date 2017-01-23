@@ -1,16 +1,16 @@
 local awful = require("awful")
 local menubar = require("menubar")
 
-layouttimer = timer({ timeout = 0.01 })
-layouttimer:connect_signal("timeout", function()
+--layouttimer = timer({ timeout = 0.01 })
+--layouttimer:connect_signal("timeout", function()
   --c = awful.mouse.client_under_pointer(screen)
   --if c then
     --client.focus = c
     --c:raise()
   --end
   --mouse.coords({x = client.focus., y = 10})
-  layouttimer:stop()
-end)
+--  layouttimer:stop()
+--end)
 
 -- {{{ Mouse bindings
 root.buttons(awful.util.table.join(
@@ -23,13 +23,13 @@ root.buttons(awful.util.table.join(
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(globalbinds,
     awful.key({ modkey,           }, "Left",   function() awful.tag.viewprev()
-                                                          layouttimer:start()
+                                                          --layouttimer:start()
                                                           end      ),
     awful.key({ modkey,           }, "Right",  function() awful.tag.viewnext()
-                                                          layouttimer:start()
+                                                          --layouttimer:start()
                                                           end      ),
     awful.key({ modkey,           }, "Escape", function() awful.tag.history.restore()
-                                                          layouttimer:start()
+                                                          --layouttimer:start()
                                                           end      ),
 
     awful.key({ modkey,           }, "j",
@@ -117,7 +117,7 @@ for i = 1, 9 do
                         local tag = awful.tag.gettags(screen)[i+1]
                         if tag then
                            awful.tag.viewonly(tag)
-                           layouttimer:start()
+                           --layouttimer:start()
                         end
                   end),
         awful.key({ modkey, "Control" }, "#" .. i + 9,
@@ -158,7 +158,7 @@ for i = 1, 6 do
                         local tag = awful.tag.gettags(screen)[i+10]
                         if tag then
                            awful.tag.viewonly(tag)
-                           layouttimer:start()
+                           --layouttimer:start()
                         end
                   end),
         awful.key({ modkey, "Control" }, "#" .. np_map[i],
@@ -192,7 +192,7 @@ end
                         local tag = awful.tag.gettags(screen)[1]
                         if tag then
                            awful.tag.viewonly(tag)
-                           layouttimer:start()
+                           --layouttimer:start()
                         end
                   end),
         awful.key({ modkey, "Control" }, "#" .. 49,

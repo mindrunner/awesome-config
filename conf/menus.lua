@@ -13,7 +13,8 @@ myawesomemenu = {
 mymainmenu = awful.menu({ items = { --{ "awesome", myawesomemenu, beautiful.awesome_icon },
                                     --{ "terminal", terminal },
                                     { "lock", "/home/le/bin/lock" },
-                                    { "suspend", "systemctl suspend" },
+                                    { "suspend", "/home/le/bin/suspend" },
+                                    { "hibernate", "/home/le/bin/hibernate" },
                                     { "reboot", "/home/le/bin/reboot" },
                                     { "halt", "/home/le/bin/poweroff" },
                                   }
