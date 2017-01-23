@@ -12,7 +12,7 @@ awful.key({ }, "XF86AudioMicMute", function () awful.util.spawn("pamixer --toggl
 awful.key({ }, "XF86Launch1", function () awful.util.spawn("systemctl suspend") end),
 awful.key({ }, "XF86PowerOff", function () mymainmenu:show({keygrabber=true}) end),
 awful.key({ }, "XF86Display", function () awful.util.spawn("/home/le/bin/xconfig") end),
-awful.key({ }, "XF86Webcam", function () awful.util.spawn("/home/le/bin/batinfo") end),
+--awful.key({ }, "XF86Webcam", function () awful.util.spawn("/home/le/bin/batinfo") end),
 awful.key({ }, "XF86ScreenSaver", function () awful.util.spawn("/home/le/bin/lock") end),
 
 
