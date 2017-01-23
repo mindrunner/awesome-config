@@ -12,16 +12,28 @@ awful.rules.rules = {
     keys = clientkeys,
     buttons = clientbuttons } },
     {
-        rule = { instance = "termtag", class ="URxvt" },
+        rule = { instance = "termtag1", class ="URxvt" },
+        properties= { tag = tags[1][1] },
+    },
+    {
+        rule = { instance = "termtag2", class ="URxvt" },
         properties= { tag = tags[1][2] },
+    },
+    {
+        rule = { instance = "systag", class ="URxvt" },
+        properties= { tag = tags[1][14] },
     },
     {
         rule = { class = "Firefox"},
         properties= { tag = tags[1][5] },
     },
     {
-        rule = { class = "Chromium"},
+        rule = { class = "chromium-browser-chromium"},
         properties= { tag = tags[1][3] },
+    },
+    {
+        rule = { class = "vivaldi-snapshot"},
+        properties= { tag = tags[1][5] },
     },
     {
         rule = { class = "Telegram" },

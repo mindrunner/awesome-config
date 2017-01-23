@@ -38,7 +38,7 @@ local myro  = require("conf.run_once")  -- run app as long it's not running alre
 local myerr = require("conf.error")     -- error reporting
 
 -- VARIABLES
-terminal = "urxvt"
+terminal = "urxvtc"
 editor = "vim"
 editor_cmd = terminal .. " -e " .. editor
 configpath="/home/"..os.getenv("USER").."/.config/awesome/"
