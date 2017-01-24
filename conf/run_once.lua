@@ -30,6 +30,6 @@ function run_once(process, cmd)
          return
       end
    end
-   return awful.util.spawn(cmd or process)
+   return awful.spawn(cmd or process)
 end
 -- run once END

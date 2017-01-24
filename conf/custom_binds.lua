@@ -12,7 +12,6 @@ awful.key({ }, "XF86AudioMicMute", function () awful.util.spawn("pamixer --toggl
 awful.key({ }, "XF86Launch1", function () awful.util.spawn("systemctl suspend") end),
 awful.key({ }, "XF86PowerOff", function () mymainmenu:show({keygrabber=true}) end),
 awful.key({ }, "XF86Display", function () awful.util.spawn("/home/le/bin/xconfig") end),
---awful.key({ }, "XF86Webcam", function () awful.util.spawn("/home/le/bin/batinfo") end),
 awful.key({ }, "XF86ScreenSaver", function () awful.util.spawn("/home/le/bin/lock") end),
 
 
@@ -40,14 +39,14 @@ awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1)  
 awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1)      end),
 awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1)         end),
 awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1)         end),
-awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
-awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
+awful.key({ modkey,           }, "space", function () awful.layout.inc(1) end),
+awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1) end),
 
 
 awful.key({ modkey,           }, "t",
 function (c) 
   --c.ontop = not c.ontop 
-  awful.client.floating.toggle()
+  c.floating = not c.floating
 end),
 
 --MOD+TAB -- instead of switching to last client, rotate trough all clients
@@ -59,11 +58,10 @@ function ()
   end
 end)
 )
-
--- CLIENT KEYS (work on current clients-windows)
+--
+---- CLIENT KEYS (work on current clients-windows)
 clientkeys = awful.util.table.join(clientkeys,
 --KILL active client
-awful.key({ modkey, "Shift"   }, "#52",      function (c) c:kill()                         end),
 awful.key({ modkey }, "c", function (c) c:kill() end),
 
 awful.key({ modkey, "Shift"   }, ",",
@@ -86,3 +84,7 @@ function (c)
 end)
 
 )
+
+
+
+

@@ -1,6 +1,6 @@
 -- AWESOME CONFIG
 -- Author: Lukas Elsner (awesome@mindrunner.de)
--- Description: Awesome config, tested on Gentoo's awesome 3.5.5
+-- Description: Awesome config for awesome >= 4.0
 
 -- Standard awesome library
 local gears = require("gears")
@@ -26,9 +26,9 @@ naughty.config.defaults.ontop            = true
 naughty.config.defaults.font             = beautiful.font or "Verdana 12"
 naughty.config.defaults.icon             = nil
 naughty.config.defaults.icon_size        = 32
-naughty.config.defaults.fg               = beautiful.fg_focus or '#ffffff'
-naughty.config.defaults.bg               = beautiful.bg_focus or '#535d6c'
-naughty.config.presets.border_color      = beautiful.border_focus or '#535d6c'
+--naughty.config.defaults.fg               = beautiful.fg_focus or '#ffffff'
+--naughty.config.defaults.bg               = beautiful.bg_focus or '#535d6c'
+--naughty.config.presets.border_color      = beautiful.border_focus or '#535d6c'
 naughty.config.defaults.border_width     = 5
 naughty.config.defaults.hover_timeout    = nil
 
@@ -45,12 +45,11 @@ configpath="/home/"..os.getenv("USER").."/.config/awesome/"
 
 -- THEME
 -- default theme
-beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+beautiful.init("/usr/share/awesome/themes/xresources/theme.lua")
 
 -- CUSTOM THEMES - pick name from themes/
 local theme = "paper"
 beautiful.init(configpath .. "/themes/" .. theme ..  "/theme.lua")
-
 
 -- Default modkey (DEFAULT Mod4 = WinKey)
 modkey = "Mod4"
@@ -78,8 +77,3 @@ require("conf.signals")
 
 -- STARTUP apps
 require("conf.startup")
-
-local oldspawn = awful.util.spawn
-awful.util.spawn = function (s)
-  oldspawn(s, false)
-end
