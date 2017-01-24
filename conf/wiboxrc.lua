@@ -7,6 +7,12 @@ local naughty = require("naughty")
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock("%d-%m-%y %I:%M  ")
+battery0_widget = wibox.widget.textbox()
+battery0_widget:set_align("right")
+
+
+battery1_widget = wibox.widget.textbox()
+battery1_widget:set_align("right")
 battery_widget = wibox.widget.textbox()
 battery_widget:set_align("right")
 
@@ -22,6 +28,20 @@ gpu_widget:set_align("right")
 hdd_widget = wibox.widget.textbox()
 hdd_widget:set_align("right")
 
+backlight_widget = wibox.widget.textbox()
+backlight_widget:set_align("right")
+
+
+function dir_exists( sPath )
+  if type( sPath ) ~= "string" then return false end
+
+  local response = os.execute( "cd " .. sPath .. " > /dev/null 2>&1")
+  if response == 0 then
+    return true
+  end
+  return false
+end
+
 function directory_exists(path)
   local f  = io.popen("cd " .. path)
   local ff = f:read("*all")
@@ -36,17 +56,27 @@ end
 function fanInfo()
   local fcur = io.popen("cat /proc/acpi/ibm/fan | grep speed: | cut -c9-")
   local cur = fcur:read()
-  local fan = " F("..cur..")"
+  local fan = "  F("..cur..")  "
   fan_widget:set_markup(fan)
   fcur:close();
 end
 
+function backlightInfo()
+  local fcur = io.popen("cat /sys/class/backlight/*/brightness")
+  local cur = fcur:read()
+  local backlight = "  L(N/A)  "
+  if cur ~= nil then
+    backlight = "  L("..cur..")  "
+  end
+  backlight_widget:set_markup(backlight)
+  fcur:close();
+end
 
 function gpuInfo()
   local fcur = io.popen("cat /proc/acpi/bbswitch | cut -c14-")
   local cur = fcur:read()
   if cur == nil then
-    local gpu = " G(N/A)  "
+    local gpu = "  G(N/A)  "
     gpu_widget:set_markup(gpu)
   else
     if cur:match("OFF") then
@@ -54,7 +84,7 @@ function gpuInfo()
     else
       cur = "1"
     end
-    local gpu = " G("..cur..")  "
+    local gpu = "  G("..cur..")  "
     gpu_widget:set_markup(gpu)
   end
   fcur:close();
@@ -75,127 +105,183 @@ end
 
 function batteryInfo(adapter)
   spacer = "  "
-  local test = directory_exists("/sys/class/power_supply/"..adapter)
+  local has_bat0 = true
+  --local has_bat1 = false
+  --has_bat0 = dir_exists("/sys/class/power_supply/"..adapter)
+  --has_bat1 = dir_exists("/sys/class/power_supply/BAT1")
   local battery = "N/A"
-  if test == false then
-    battery_widget:set_markup(spacer..battery..spacer)
+  local all = ""
+  if has_bat0 == false then
+        battery0_widget:set_markup(spacer..battery..spacer)
     return
   end
-  local fcur = io.open("/sys/class/power_supply/"..adapter.."/energy_now")
-  local fcap = io.open("/sys/class/power_supply/"..adapter.."/energy_full")
-  local fsta = io.open("/sys/class/power_supply/"..adapter.."/status")
-  local cur = fcur:read()
-  local cap = fcap:read()
-  local sta = fsta:read()
-  battery = math.floor(cur * 100 / cap)
-  local time = nil
-  --local ftime = io.popen("upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep time | grep -oE \\-?[0-9]+\\.[0-9]+")
-  local ftime = io.popen("/home/le/bin/batcheck")
-  --local ftime = nil
-  if ftime == nil then
-  else
-    time = ftime:read()
-    ftime:close()
-  end
-  if time == nil then
-    time = ""
-  end
-  if sta:match("Charging") then
-    dir = ""
-    battery = "C("..time.."/"..battery..")"
-  elseif sta:match("Discharging") then
-    dir = ""
+  --if has_bat1 == false then
+  --      battery1_widget:set_markup("")
+  --end
 
-      battery = "B("..time.."/"..battery..")"
+  local discharging = false
 
-
-    --if tonumber(battery) < 25 then
-    --  notify-send -u normal "low battery" "$BATTINFO"
-    --end
-  
-  
-    --if tonumber(battery) < 25 then
-    --  notify-send -u critical "low battery" "$BATTINFO" 
-    --end
-
-  else
-    dir = " "
-    battery = "C("..battery..")"
-  end
-  battery_widget:set_markup(spacer..dir..battery..dir..spacer)
-  print(battery)
-  fcur:close()
-  fcap:close()
-  fsta:close()
-end
-
-function netInfo()
-  local fnet = io.popen("wicd-cli -i")
-  local net = fnet:read()
-  if net == nil then
-    local res = "N/A"
-  elseif net:match("Not connected") then
-    res = "X"
-  elseif net:match("progress") then
-    res = "P"
-  else
-    net = fnet:read()
-    if net:match("Wireless") then
-      local fspeed = io.popen("/sbin/iwconfig wlp3s0 |grep \"Bit Rate\"")
-      local fqual = io.popen("/sbin/iwconfig wlp3s0 |grep \"Link Quality\"")
-      local speed = fspeed:read("*all")
-      local qual = fqual:read("*all")
-      local q = tonumber(string.match(qual, "%d+"))
-      local r = tonumber(string.sub(string.match(qual, "/%d+"), 2))
-      local s = string.match(speed, "%d+")
-      local linkqual = q/r*100
-      res = "W("..math.floor(linkqual).."/"..s..")"
-      fspeed:close();
-      fqual:close();
+  if has_bat0 then
+    local fcur = io.open("/sys/class/power_supply/"..adapter.."/energy_now")
+    local fcap = io.open("/sys/class/power_supply/"..adapter.."/energy_full")
+    local fsta = io.open("/sys/class/power_supply/"..adapter.."/status")
+    local cur = fcur:read()
+    local cap = fcap:read()
+    local sta = fsta:read()
+    discharging = sta:match("Discharging")
+    battery = math.floor(cur * 100 / cap)
+    local time = nil
+    --local ftime = io.popen("upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep time | grep -oE \\-?[0-9]+\\.[0-9]+")
+    local ftime = io.popen("/home/le/bin/batcheck 1")
+    --local ftime = nil
+    if ftime == nil then
     else
-      local fspeed = io.popen("/usr/sbin/ethtool enp0s25 |grep Speed:")
-      local speed = fspeed:read("*all")
-      --print(speed)
-      local s = string.match(speed, "%d+")
-      res = "L("..s..")"
-      fspeed:close();
+        time = ftime:read()
+        ftime:close()
     end
+    if time == nil then
+        time = ""
+    end
+    if sta:match("Charging") then
+        dir = ""
+        battery = "  C("..time.."/"..battery..")  "
+    elseif sta:match("Discharging") then
+        dir = ""
+
+        battery = "  B("..time.."/"..battery..")  "
+
+
+        --if tonumber(battery) < 25 then
+        --  notify-send -u normal "low battery" "$BATTINFO"
+        --end
+        --if tonumber(battery) < 25 then
+        --  notify-send -u critical "low battery" "$BATTINFO"
+        --end
+
+    else
+        dir = " "
+        battery = "  C("..battery..")  "
+    end
+    battery0_widget:set_markup(battery)
+
+    fcur:close()
+    fcap:close()
+    fsta:close()
   end
-  fnet:close()
-  --print(res)
-  --net_widget:set_markup("  "..res)
+
+ -- if has_bat1 then
+ --   local fcur = io.open("/sys/class/power_supply/BAT1/energy_now")
+ --   local fcap = io.open("/sys/class/power_supply/BAT1/energy_full")
+ --   local fsta = io.open("/sys/class/power_supply/BAT1/status")
+ --   local cur = fcur:read()
+ --   local cap = fcap:read()
+ --   local sta = fsta:read()
+ --   discharging = discharging or sta:match("Discharging")
+ --   battery = math.floor(cur * 100 / cap)
+ --   local time = nil
+ --   --local ftime = io.popen("upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep time | grep -oE \\-?[0-9]+\\.[0-9]+")
+ --   local ftime = io.popen("/home/le/bin/batcheck 2")
+ --   --local ftime = nil
+ --   if ftime == nil then
+ --   else
+ --       time = ftime:read()
+ --       ftime:close()
+ --   end
+ --   if time == nil then
+ --       time = ""
+ --   end
+ --   if sta:match("Charging") then
+ --       dir = ""
+ --       battery = "  C("..time.."/"..battery..")  "
+ --   elseif sta:match("Discharging") then
+ --       dir = ""
+
+ --       battery = "  B("..time.."/"..battery..")  "
+
+
+ --       --if tonumber(battery) < 25 then
+ --       --  notify-send -u normal "low battery" "$BATTINFO"
+ --       --end
+ --       --if tonumber(battery) < 25 then
+ --       --  notify-send -u critical "low battery" "$BATTINFO"
+ --       --end
+
+ --   else
+ --       dir = " "
+ --       battery = "  C("..battery..")  "
+ --   end
+ --   battery1_widget:set_markup(battery)
+
+ --   fcur:close()
+ --   fcap:close()
+ --   fsta:close()
+ -- end
+
+
+ -- if discharging and has_bat0 and has_bat1 then
+ --     local fpercent = io.popen("/home/le/bin/batcheck 3")
+ --     local ftime = io.popen("/home/le/bin/batcheck 4")
+ --     local percent = fpercent:read()
+ --     local time = ftime:read()
+
+ --     if percent == nil or time == nil then
+ --       battery_widget:set_markup("")
+ --     else
+ --       battery_widget:set_markup("("..time.."/"..percent..")")
+ --     end
+ -- else
+ --     battery_widget:set_markup("")
+ -- end
+
 end
+
+--function netInfo()
+--  local fnet = io.popen("wicd-cli -i")
+--  local net = fnet:read()
+--  if net == nil then
+--    local res = "N/A"
+--  elseif net:match("Not connected") then
+--    res = "X"
+--  elseif net:match("progress") then
+--    res = "P"
+--  else
+--    net = fnet:read()
+--    if net:match("Wireless") then
+--      local fspeed = io.popen("/sbin/iwconfig wlp3s0 |grep \"Bit Rate\"")
+--      local fqual = io.popen("/sbin/iwconfig wlp3s0 |grep \"Link Quality\"")
+--      local speed = fspeed:read("*all")
+--      local qual = fqual:read("*all")
+--      local q = tonumber(string.match(qual, "%d+"))
+--      local r = tonumber(string.sub(string.match(qual, "/%d+"), 2))
+--      local s = string.match(speed, "%d+")
+--      local linkqual = q/r*100
+--      res = "W("..math.floor(linkqual).."/"..s..")"
+--      fspeed:close();
+--      fqual:close();
+--    else
+--      local fspeed = io.popen("/usr/sbin/ethtool enp0s25 |grep Speed:")
+--      local speed = fspeed:read("*all")
+--      --print(speed)
+--      local s = string.match(speed, "%d+")
+--      res = "L("..s..")"
+--      fspeed:close();
+--    end
+--  end
+--  fnet:close()
+--  --print(res)
+--  --net_widget:set_markup("  "..res)
+--end
 
 battery_timer = timer({timeout = 1})
 battery_timer:connect_signal("timeout", function()
   batteryInfo("BAT0")
+  fanInfo()
+--  gpuInfo()
+  --hddInfo()
+  --backlightInfo()
+--netInfo()
 end)
 battery_timer:start()
-
---net_timer = timer({timeout = 1})
---net_timer:connect_signal("timeout", function()
---netInfo()
---end)
---net_timer:start()
-
-fan_timer = timer({timeout = 1})
-fan_timer:connect_signal("timeout", function()
-  fanInfo()
-end)
-fan_timer:start()
-
-
-gpu_timer = timer({timeout = 1})
-gpu_timer:connect_signal("timeout", function()
-  gpuInfo()
-end)
-gpu_timer:start()
-
-hdd_timer = timer({timeout = 1})
-hdd_timer:connect_signal("timeout", function()
-  hddInfo()
-end)
-hdd_timer:start()
 
 -- battery warning
 local function trim(s)
@@ -295,7 +381,7 @@ for s = 1, screen.count() do
   mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
   -- Create the wibox
-  mywibox[s] = awful.wibox({ position = "bottom", height="12", screen = s })
+  mywibox[s] = awful.wibox({ position = "bottom", screen = s })
 
   -- Widgets that are aligned to the left
   local left_layout = wibox.layout.fixed.horizontal()
@@ -305,12 +391,17 @@ for s = 1, screen.count() do
 
   -- Widgets that are aligned to the right
   local right_layout = wibox.layout.fixed.horizontal()
-  if s == 1 then right_layout:add(wibox.widget.systray()) end
-  right_layout:add(hdd_widget)
-  right_layout:add(gpu_widget)
+  local systray = wibox.widget.systray()
+  --systray:set_base_size(10)
+  if s == 1 then right_layout:add(systray) end
+--  right_layout:add(hdd_widget)
+  --right_layout:add(gpu_widget)
   right_layout:add(fan_widget)
+ -- right_layout:add(backlight_widget)
   --right_layout:add(net_widget)
-  right_layout:add(battery_widget)
+  right_layout:add(battery0_widget)
+  --right_layout:add(battery1_widget)
+  --right_layout:add(battery_widget)
   right_layout:add(volume_widget)
   right_layout:add(mytextclock)
   right_layout:add(mylayoutbox[s])
