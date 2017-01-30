@@ -23,7 +23,7 @@ awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f /mnt/hdd/d
 awful.key({ "Mod1" }, "Print", function () awful.util.spawn("scrot -s -e 'mv $f /mnt/hdd/drive/lu/pic/screenshots/ 2>/dev/null'") end),
 awful.key({ "Mod1" }, "l", function () awful.util.spawn("/home/le/bin/lock") end),
 awful.key({ modkey }, "e", function () awful.util.spawn("/home/le/bin/fm") end),
-awful.key({ modkey }, "r", function () awful.util.spawn("gmrun") end),
+--awful.key({ modkey }, "r", function () awful.util.spawn("gmrun") end),
 awful.key({ modkey, "Shift" }, "r", function () awful.util.spawn("xkill") end),
 awful.key({ modkey }, "s", function () awful.util.spawn("/home/le/bin/xconfig") end),
 awful.key({ modkey, }, ".", function () awful.screen.focus_relative( 1) end),

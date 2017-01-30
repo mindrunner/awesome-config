@@ -366,54 +366,80 @@ awful.button({ }, 5, function ()
 	if client.focus then client.focus:raise() end
 end))
 
+mykeyboardlayout = awful.widget.keyboardlayout()
+
+
+
 awful.screen.connect_for_each_screen(function(s)
-	-- Create a promptbox for each screen
-	mypromptbox[s] = awful.widget.prompt()
-	-- Create an imagebox widget which will contains an icon indicating which layout we're using.
-	-- We need one layoutbox per screen.
-	mylayoutbox[s] = awful.widget.layoutbox(s)
-	mylayoutbox[s]:buttons(awful.util.table.join(
-	awful.button({ }, 1, function () awful.layout.inc(layouts, 1) end),
-	awful.button({ }, 3, function () awful.layout.inc(layouts, -1) end),
-	awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
-	awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
-	-- Create a taglist widget
-	mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
+    s.mypromptbox = awful.widget.prompt()
+	    
+    -- Create an imagebox widget which will contains an icon indicating which layout we're using.
+    -- We need one layoutbox per screen.
+    s.mylayoutbox = awful.widget.layoutbox(s)
+    s.mylayoutbox:buttons(awful.util.table.join(
+                           awful.button({ }, 1, function () awful.layout.inc( 1) end),
+                           awful.button({ }, 3, function () awful.layout.inc(-1) end),
+                           awful.button({ }, 4, function () awful.layout.inc( 1) end),
+                           awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+    -- Create a taglist widget
+    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
 
-	-- Create a tasklist widget
-	mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
+    -- Create a tasklist widget
+    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
-	-- Create the wibox
-	mywibox[s] = awful.wibox({ position = "bottom", screen = s })
+    -- Create the wibox
+    s.mywibox = awful.wibar({ position = "bottom", screen = s })
 
-	-- Widgets that are aligned to the left
-	local left_layout = wibox.layout.fixed.horizontal()
-	-- left_layout:add(mylauncher)
-	left_layout:add(mytaglist[s])
-	left_layout:add(mypromptbox[s])
+    -- Add widgets to the wibox
+    s.mywibox:setup {
+        layout = wibox.layout.align.horizontal,
+        { -- Left widgets
+            layout = wibox.layout.fixed.horizontal,
+            mylauncher,
+            s.mytaglist,
+            s.mypromptbox,
+        },
+        s.mytasklist, -- Middle widget
+        { -- Right widgets
+            layout = wibox.layout.fixed.horizontal,
+            mykeyboardlayout,
+            wibox.widget.systray(),
+	    battery0_widget,
+	    volume_widget,
+            mytextclock,
+            s.mylayoutbox,
+        },
+    }
 
-	-- Widgets that are aligned to the right
-	local right_layout = wibox.layout.fixed.horizontal()
-	local systray = wibox.widget.systray()
-	--systray:set_base_size(10)
-	right_layout:add(systray) 
-	--  right_layout:add(hdd_widget)
-	--right_layout:add(gpu_widget)
-	--right_layout:add(fan_widget)
-	-- right_layout:add(backlight_widget)
-	--right_layout:add(net_widget)
-	right_layout:add(battery0_widget)
-	--right_layout:add(battery1_widget)
-	--right_layout:add(battery_widget)
-	right_layout:add(volume_widget)
-	right_layout:add(mytextclock)
-	right_layout:add(mylayoutbox[s])
 
-	-- Now bring it all together (with the tasklist in the middle)
-	local layout = wibox.layout.align.horizontal()
-	layout:set_left(left_layout)
-	layout:set_middle(mytasklist[s])
-	layout:set_right(right_layout)
-
-	mywibox[s]:set_widget(layout)
+--	-- Widgets that are aligned to the left
+--	local left_layout = wibox.layout.fixed.horizontal()
+--	-- left_layout:add(mylauncher)
+--	left_layout:add(mytaglist[s])
+--	left_layout:add(mypromptbox[s])
+--
+--	-- Widgets that are aligned to the right
+--	local right_layout = wibox.layout.fixed.horizontal()
+--	local systray = wibox.widget.systray()
+--	--systray:set_base_size(10)
+--	right_layout:add(systray) 
+--	--  right_layout:add(hdd_widget)
+--	--right_layout:add(gpu_widget)
+--	--right_layout:add(fan_widget)
+--	-- right_layout:add(backlight_widget)
+--	--right_layout:add(net_widget)
+--	right_layout:add(battery0_widget)
+--	--right_layout:add(battery1_widget)
+--	--right_layout:add(battery_widget)
+--	right_layout:add(volume_widget)
+--	right_layout:add(mytextclock)
+--	right_layout:add(mylayoutbox[s])
+--
+--	-- Now bring it all together (with the tasklist in the middle)
+--	local layout = wibox.layout.align.horizontal()
+--	layout:set_left(left_layout)
+--	layout:set_middle(mytasklist[s])
+--	layout:set_right(right_layout)
+--
+--	mywibox[s]:set_widget(layout)
 end)

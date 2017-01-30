@@ -52,6 +52,13 @@ awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1) end),
 
 awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
+
+
+awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
+  {description = "run prompt", group = "launcher"}),
+
+
+
 awful.key({ modkey }, "x",
 function ()
 	awful.prompt.run {
@@ -219,5 +226,23 @@ clientbuttons = awful.util.table.join(clientbuttons,
 awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
 awful.button({ modkey }, 1, awful.mouse.client.move),
 awful.button({ modkey }, 3, awful.mouse.client.resize))
+
+
+ 
+
+
+
+
+
+
+
+
+awful.screen.connect_for_each_screen(function(s)
+    -- Create a promptbox for each screen
+    s.mypromptbox = awful.widget.prompt()
+end)
+-- }}}
+
+
 
 
