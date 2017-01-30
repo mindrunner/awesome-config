@@ -5,9 +5,9 @@ local volume = require("conf.volume")
 local naughty = require("naughty")
 local gears = require("gears")
 
--- {{{ Wibox
--- Create a textclock widget
 mytextclock = wibox.widget.textclock("%d-%m-%y %I:%M  ")
+mykeyboardlayout = awful.widget.keyboardlayout()
+
 battery0_widget = wibox.widget.textbox()
 battery0_widget:set_align("right")
 
@@ -365,9 +365,6 @@ awful.button({ }, 5, function ()
 	awful.client.focus.byidx(-1)
 	if client.focus then client.focus:raise() end
 end))
-
-mykeyboardlayout = awful.widget.keyboardlayout()
-
 
 
 awful.screen.connect_for_each_screen(function(s)
