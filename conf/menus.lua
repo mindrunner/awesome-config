@@ -11,7 +11,7 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { --{ "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    --{ "terminal", terminal },
+   				    { "hotkeys", function() return false, hotkeys_popup.show_help end},
                                     { "lock", "/home/le/bin/lock" },
                                     { "suspend", "/home/le/bin/suspend" },
                                     { "hibernate", "/home/le/bin/hibernate" },
