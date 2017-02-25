@@ -54,7 +54,7 @@ awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
 
 
-awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
+awful.key({ modkey },            "t",     function () awful.screen.focused().mypromptbox:run() end,
   {description = "run prompt", group = "launcher"}),
 
 
