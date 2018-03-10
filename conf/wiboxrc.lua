@@ -6,7 +6,6 @@ local naughty = require("naughty")
 local gears = require("gears")
 
 mytextclock = wibox.widget.textclock("%d-%m-%y %I:%M  ")
-mykeyboardlayout = awful.widget.keyboardlayout()
 
 battery0_widget = wibox.widget.textbox()
 battery0_widget:set_align("right")
@@ -277,7 +276,7 @@ end
 
 battery_timer = gears.timer({timeout = 10})
 battery_timer:connect_signal("timeout", function()
-	batteryInfo("BAT0")
+	batteryInfo("BAT1")
 	--fanInfo()
 	--  gpuInfo()
 	--hddInfo()
@@ -292,8 +291,8 @@ local function trim(s)
 end
 
 local function bat_notification()
-	local f_capacity = assert(io.open("/sys/class/power_supply/BAT0/capacity", "r"))
-	local f_status = assert(io.open("/sys/class/power_supply/BAT0/status", "r"))
+	local f_capacity = assert(io.open("/sys/class/power_supply/BAT1/capacity", "r"))
+	local f_status = assert(io.open("/sys/class/power_supply/BAT1/status", "r"))
 	local bat_capacity = tonumber(f_capacity:read("*all"))
 	local bat_status = trim(f_status:read("*all"))
 
@@ -430,6 +429,138 @@ local tasklist_buttons = awful.util.table.join(
 
 
 
+
+
+
+
+
+
+
+-- Keyboard map indicator and switcher
+mykeyboardlayout = awful.widget.keyboardlayout()
+ 
+-- {{{ Battery state text
+-- Initialize widget
+--batterywidget = wibox.widget.textbox()
+--batterywidget.border_width = 5
+--bat_clo = battery.batclosure("BAT0")
+--batterywidget:set_text(bat_clo())
+--battimer = timer({ timeout = 30 })
+--battimer:connect_signal("timeout", function() batterywidget:set_text(bat_clo()) end)
+--battimer:start()
+-- }}}
+ 
+-- {{{ Volume
+-- Initialize widget
+ 
+ 
+volumewidget = wibox.widget {
+    {
+        max_value     = 100,
+        value         = 0,
+        background_color = '#222222',
+        color = { type = "linear", from = { 0, 0 }, to = { 20, 0 }, stops = { { 0, "#46FF31" }, { 0.5, "#FBFF0B" }, { 1, "#FF0000" } }},
+        widget        = wibox.widget.progressbar,
+    },
+    forced_height = 20,
+    forced_width  = 15,
+    direction     = 'east',
+    layout        = wibox.container.rotate,
+    buttons       = awful.util.table.join(
+        awful.button({ }, 4,
+                function ()
+                        awful.util.spawn_with_shell("amixer set Master playback 1%+ -M")
+                        vicious.force({volumewidget})
+                end),
+        awful.button({ }, 5,
+                function ()
+                        awful.util.spawn_with_shell("amixer set Master playback 1%- -M")
+                        vicious.force({volumewidget})
+                end)
+    )
+}
+ 
+volume_text = awful.tooltip({objects = {volumewidget},})
+ 
+vicious.register(volumewidget, vicious.widgets.volume,
+        function (widget, args)
+            if args[2] == "♫" then -- Sound is ON
+                   widget.widget:set_value(args[1])
+                   volume_text:set_text(args[1] .. "%")
+                   return args[1]
+            else
+                   widget.widget:set_value(0)
+                   volume_text:set_text("Mute")
+                   return 0
+            end
+        end, 5, "Master"
+)
+-- }}}
+ 
+-- {{{ CPU load
+-- Create CPU load widget
+cpubar = awful.widget.graph()
+cpubar.border_width = 5
+cpubar:set_width(40)
+cpubar:set_background_color("#222222")
+cpubar:set_color({ type = "linear", from = { 0, 0 }, to = { 0, 20 }, stops = { { 0, "#FF0000" }, { 0.5, "#391BFA" }, { 1, "#391BFA" } }})
+ 
+cpubar_t = awful.tooltip({ objects = { cpubar }, })
+--vicious.register(cpubar, vicious.widgets.cpu, "$1")
+ 
+vicious.register(cpubar, vicious.widgets.cpu,
+                    function (widget, args)
+                        local p = io.popen("ps aux --sort=-pcpu | head -6 | awk '{ proc=\"\" \n for(i = 11; i <= NF; i++) proc = proc $i \" \" \n printf \"\\n%-10s %-6s %-6s %-30s\",$1,$2,$3,substr(proc, 0, 30)}'")
+                        local o = p:read("*all")
+                        p:close()
+                        o = string.gsub(o, "<", "{")
+                        o = string.gsub(o, ">", "}")
+                        cpubar_t:set_text(string.format("CPU Usage %s%%%s", args[1], o))
+                        return args[1]
+                    end)
+-- }}}
+ 
+-- {{{ RAM usage
+-- RAM usage widget
+ 
+memwidget = wibox.widget {
+    {
+        max_value     = 100,
+        value         = 0,
+        background_color = '#222222',
+        color = { type = "linear", from = { 0, 0 }, to = { 15, 0 }, stops = { { 0, "#AECF96" }, { 0.5, "#88A175" }, { 1, "#FF5656" } }},
+        widget        = wibox.widget.progressbar,
+    },
+    forced_height = 20,
+    forced_width  = 10,
+    direction     = 'east',
+    layout        = wibox.container.rotate,
+}
+ 
+-- RAM usage tooltip
+memwidget_t = awful.tooltip({ objects = { memwidget },})
+ 
+vicious.cache(vicious.widgets.mem)
+vicious.register(memwidget, vicious.widgets.mem,
+                function (widget, args)
+                    local p = io.popen("ps -eo user,pid,rss,args --sort=-rss | head -11 | awk '{hr[1024*1024]=\"GB\"; hr[1024]=\"MB\"; h=0; for (x=1024*1024*1024; x>=1024; x/=1024) { if ($3>=x) { h=x; break } } { proc=\"\"; for(i = 4; i <= NF; i++) proc = proc $i \" \" } { if(NR != 1) { printf (\"\\n%-10s %-6s %-6.2f%s %-30s\", $1, $2, $3/h, hr[h], substr(proc, 0, 30)) } else { printf (\"\\n%-10s %-6s %s %-30s\", $1, $2, \"SIZE    \", substr(proc, 0, 30)) }}}'")
+                    local o = p:read("*all")
+                    p:close()
+                    memwidget_t:set_text(string.format("RAM: %sMB / %sMB%s", args[2], args[3], o))
+                    widget.widget:set_value(args[1])
+                    return args[1]
+                 end, 6)
+                 --update every 6 seconds
+-- }}}
+
+
+
+
+
+
+
+
+
 awful.screen.connect_for_each_screen(function(s)
     s.mypromptbox = awful.widget.prompt()
 	    
@@ -462,11 +593,14 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            wibox.widget.systray(),
-	    battery0_widget,
-	    volume_widget,
-            mytextclock,
             mykeyboardlayout,
+            memwidget,
+            cpubar,
+            volumewidget,
+            wibox.widget.systray(),
+	        battery0_widget,
+	        volume_widget,
+            mytextclock,
             s.mylayoutbox,
         },
     }

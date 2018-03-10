@@ -11,6 +11,8 @@ awful.button({ }, 5, awful.tag.viewprev)
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(globalbinds,
+awful.key({ modkey,           }, "t",      hotkeys_popup.show_help,
+              {description="show help", group="awesome"}),
 awful.key({ modkey,           }, "Left",   function() awful.tag.viewprev()
 end      ),
 awful.key({ modkey,           }, "Right",  function() awful.tag.viewnext()
@@ -54,8 +56,8 @@ awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
 
 
-awful.key({ modkey },            "t",     function () awful.screen.focused().mypromptbox:run() end,
-  {description = "run prompt", group = "launcher"}),
+--awful.key({ modkey },            "t",     function () awful.screen.focused().mypromptbox:run() end,
+ -- {description = "run prompt", group = "launcher"}),
 
 
 
@@ -80,6 +82,7 @@ awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle         
 awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
 awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end),
 awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end),
+awful.key({ modkey,           }, "s",      function (c) c.sticky = not c.sticky            end),
 awful.key({ modkey,           }, "n",
 function (c)
 	-- The client currently has the input focus, so it cannot be
@@ -90,6 +93,10 @@ awful.key({ modkey,           }, "m",
 function (c)
 	c.maximized_horizontal = not c.maximized_horizontal
 	c.maximized_vertical   = not c.maximized_vertical
+end),
+awful.key({ modkey, "Shift"    }, "m",
+function (c)
+	c.maximized = not c.maximized
 end)
 )
 

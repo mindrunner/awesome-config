@@ -5,6 +5,10 @@ awful = require("awful")
 beautiful = require("beautiful")
 
 client.connect_signal("manage", function (c, startup)
+
+
+    awful.client.movetoscreen(c, mouse.screen)
+
     -- Enable sloppy focus
     c:connect_signal("mouse::enter", function(c)
         if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
@@ -70,6 +74,21 @@ client.connect_signal("manage", function (c, startup)
         awful.titlebar(c):set_widget(layout)
     end
 end)
+
+
+
+tag.connect_signal("request::screen", function(t)
+    clients = t:clients()
+    for s in screen do
+        if s ~= t.screen and clients and next(clients) then
+            t.screen = s
+            t.name = t.name .. "'"
+            awful.tag.setvolatile(true, t)
+            return
+        end
+    end
+end);
+
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
